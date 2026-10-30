@@ -9,8 +9,7 @@ class ContactSeeder extends Seeder
 {
     public function run(): void
     {
-        $usuario = User::where('email', 'ana@example.com')
-            ->firstOrFail();
+        $usuario = User::where('email', 'ana@example.com')->firstOrFail();
 
         $contactos = [
             [

@@ -1,10 +1,8 @@
 
 <?php
 
-use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Validation\Rule;
 
 Route::get('/v1/health', function () {
     return response()->json([

@@ -1,4 +1,3 @@
-
 <?php
 
 namespace Database\Factories;
@@ -6,9 +5,6 @@ namespace Database\Factories;
 use App\Models\Contact;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<Contact>
- */
 class ContactFactory extends Factory
 {
     protected $model = Contact::class;
@@ -17,10 +13,10 @@ class ContactFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'phone_number' => fake()->phoneNumber(),
+            'phone_number' => fake()->numerify('3#########'),
             'address' => fake()->address(),
             'email' => fake()->unique()->safeEmail(),
-            'avatar' => fake()->imageUrl(),
+            'avatar' => null,
         ];
     }
 }
