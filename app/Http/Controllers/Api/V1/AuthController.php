@@ -16,20 +16,23 @@ class AuthController extends Controller
 {
     /**
      * Inicia sesión y entrega un token para la app.
-     *
-     * @unauthenticated
      */
     public function login(LoginRequest $request): JsonResponse
     {
         $user = User::where('email', $request->validated('email'))->first();
 
-        if (! $user || ! Hash::check($request->validated('password'), $user->password)) {
+        if (
+            ! $user ||
+            ! Hash::check($request->validated('password'), $user->password)
+        ) {
             throw ValidationException::withMessages([
                 'email' => 'Las credenciales no son correctas.',
             ]);
         }
 
-        $token = $user->createToken($request->validated('device_name'))->plainTextToken;
+        $token = $user->createToken(
+            $request->validated('device_name')
+        )->plainTextToken;
 
         return response()->json([
             'token' => $token,
@@ -39,7 +42,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Perfil del usuario autenticado.
+     * Devuelve el perfil del usuario autenticado.
      */
     public function me(Request $request): UserResource
     {
@@ -51,7 +54,11 @@ class AuthController extends Controller
      */
     public function logout(Request $request): Response
     {
-        $request->user()->currentAccessToken()->delete();
+        $token = $request->user()->currentAccessToken();
+
+        if ($token && method_exists($token, 'delete')) {
+            $token->delete();
+        }
 
         return response()->noContent();
     }
