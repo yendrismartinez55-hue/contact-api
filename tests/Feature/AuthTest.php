@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Models\User;
@@ -38,7 +39,8 @@ it('rechaza una contraseña incorrecta con 422', function () {
         'password' => 'otra',
     ]))
         ->assertUnprocessable()
-        ->assertJsonValidationErrors(['email']);
+        ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+        ->assertSeeText('Las credenciales no son correctas.');
 });
 
 it('usa el mismo mensaje si el correo no existe', function () {
@@ -46,10 +48,8 @@ it('usa el mismo mensaje si el correo no existe', function () {
         'email' => 'nadie@contacts.test',
     ]))
         ->assertUnprocessable()
-        ->assertJsonPath(
-            'errors.email.0',
-            'Las credenciales no son correctas.'
-        );
+        ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+        ->assertSeeText('Las credenciales no son correctas.');
 });
 
 it('valida los campos obligatorios', function (string $campo) {
@@ -57,7 +57,8 @@ it('valida los campos obligatorios', function (string $campo) {
         $campo => '',
     ]))
         ->assertUnprocessable()
-        ->assertJsonValidationErrors([$campo]);
+        ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+        ->assertSeeText('Los datos enviados no son válidos.');
 })->with(['email', 'password', 'device_name']);
 
 it('pide token para ver el perfil', function () {
@@ -65,10 +66,11 @@ it('pide token para ver el perfil', function () {
         ->assertUnauthorized();
 });
 
-it('responde 401 en JSON aunque falte la cabecera Accept', function () {
+it('responde 401 en texto plano aunque falte la cabecera Accept', function () {
     $this->get('/api/v1/auth/me')
         ->assertUnauthorized()
-        ->assertHeader('Content-Type', 'application/json');
+        ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+        ->assertSeeText('No estás autenticado.');
 });
 
 it('devuelve el perfil del usuario autenticado', function () {
@@ -89,9 +91,9 @@ it('cierra sesión y revoca el token', function () {
         ->postJson('/api/v1/auth/logout')
         ->assertNoContent();
 
-    // Comprueba que el token fue eliminado.
     expect($user->tokens()->count())->toBe(0);
 });
+
 it('limita los intentos de login a 5 por minuto', function () {
     foreach (range(1, 5) as $intento) {
         $this->postJson(

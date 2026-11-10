@@ -9,10 +9,9 @@ it('responde el estado del servicio', function () {
         ]);
 });
 
-it('responde 404 en JSON cuando la ruta no existe', function () {
-    $this->getJson('/api/v1/no-existe')
+it('responde 404 en texto plano cuando la ruta no existe', function () {
+    $this->get('/api/v1/no-existe')
         ->assertNotFound()
-        ->assertJsonStructure([
-            'message',
-        ]);
+        ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+        ->assertSeeText('El recurso solicitado no existe.');
 });

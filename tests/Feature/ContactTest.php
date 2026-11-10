@@ -56,6 +56,7 @@ it('permite crear un contacto', function () {
     ]);
 });
 
+
 it('valida los campos obligatorios al crear un contacto', function () {
     $user = User::factory()->create();
 
@@ -63,13 +64,10 @@ it('valida los campos obligatorios al crear un contacto', function () {
 
     $this->postJson('/api/v1/contacts', [])
         ->assertUnprocessable()
-        ->assertJsonValidationErrors([
-            'name',
-            'phone_number',
-            'address',
-            'email',
-        ]);
+        ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+        ->assertSeeText('Los datos enviados no son válidos.');
 });
+
 
 it('permite consultar un contacto propio', function () {
     $user = User::factory()->create();
