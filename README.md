@@ -1,77 +1,319 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Contact API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST desarrollada con **Laravel** para la gestión de contactos. Permite a los usuarios autenticarse y administrar su propia agenda de contactos mediante operaciones CRUD (crear, consultar, actualizar y eliminar).
 
-## About Laravel
+La API utiliza **Laravel Sanctum** para la autenticación mediante tokens Bearer.
 
-## Endpoints
+## Tecnologías utilizadas
 
-| Método | Ruta                 | Descripción                       | Auth   |
-|--------|----------------------|-----------------------------------|--------|
-| GET    | /api/v1/health       | Estado del servicio               | No     |
-| POST   | /api/v1/auth/login   | Inicia sesión y entrega un token  | No     |
-| GET    | /api/v1/auth/me      | Perfil del usuario autenticado    | Bearer |
-| POST   | /api/v1/auth/logout  | Cierra sesión y revoca el token   | Bearer |
+- PHP
+- Laravel
+- MySQL
+- Laravel Sanctum
+- Composer
+- PHPUnit / Pest
+- Git y GitHub
+- Insomnia para pruebas de endpoints
+
+## Características principales
+
+- Autenticación de usuarios mediante correo electrónico y contraseña.
+- Generación de tokens de acceso con Laravel Sanctum.
+- Cierre de sesión y revocación del token utilizado.
+- Consulta de información del usuario autenticado.
+- Creación de contactos.
+- Consulta de todos los contactos del usuario.
+- Consulta de un contacto específico.
+- Actualización parcial de contactos.
+- Eliminación de contactos.
+- Validación de datos.
+- Protección de rutas mediante autenticación.
+- Aislamiento de contactos por usuario.
+
+## Requisitos previos
+
+Antes de instalar el proyecto, debes tener:
+
+- PHP compatible con la versión de Laravel del proyecto.
+- Composer.
+- MySQL.
+- Git.
+- Un entorno local como XAMPP, Laragon u otro servidor compatible.
+
+## Instalación
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/yendrismartinez55-hue/contact-api.git
+```
+
+### 2. Ingresar a la carpeta del proyecto
+
+```bash
+cd contact-api
+```
+
+### 3. Instalar las dependencias
+
+```bash
+composer install
+```
+
+### 4. Crear el archivo de configuración
+
+```bash
+cp .env.example .env
+```
+
+En Windows también puedes crear una copia de `.env.example` y nombrarla `.env`.
+
+### 5. Generar la clave de la aplicación
+
+```bash
+php artisan key:generate
+```
+
+### 6. Configurar la base de datos
+
+Abre el archivo `.env` y configura la conexión con MySQL:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=contac_api
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Ajusta el usuario y la contraseña según tu instalación de MySQL.
+
+Crea previamente la base de datos `contac_api`.
+
+### 7. Ejecutar las migraciones
+
+```bash
+php artisan migrate
+```
+
+### 8. Iniciar el servidor
+
+```bash
+php artisan serve
+```
+
+La API estará disponible en:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Endpoints de la API
+
+La API utiliza el prefijo de versión `v1`.
+
+**URL base:**
+
+```text
+http://127.0.0.1:8000/api/v1
+```
+
+### 1. Estado de la API
+
+| Método | Endpoint | Descripción | Autenticación |
+|---|---|---|---|
+| GET | `/health` | Verificar el funcionamiento de la API | No |
+
+### 2. Autenticación
+
+| Método | Endpoint | Descripción | Autenticación |
+|---|---|---|---|
+| POST | `/auth/login` | Iniciar sesión y obtener un token | No |
+| GET | `/auth/me` | Consultar el usuario autenticado | Sí |
+| POST | `/auth/logout` | Cerrar sesión y revocar el token actual | Sí |
+
+### 3. Gestión de contactos
+
+| Método | Endpoint | Descripción | Autenticación |
+|---|---|---|---|
+| GET | `/contacts` | Listar los contactos del usuario | Sí |
+| POST | `/contacts` | Crear un contacto | Sí |
+| GET | `/contacts/{contact}` | Consultar un contacto específico | Sí |
+| PATCH | `/contacts/{contact}` | Actualizar un contacto | Sí |
+| DELETE | `/contacts/{contact}` | Eliminar un contacto | Sí |
 
 ## Autenticación
 
-1. POST /api/v1/auth/login con email, password y device_name.
-2. Guardar el token de la respuesta.
-3. Enviar en cada petición protegida:
-   Authorization: Bearer {token}
-   Accept: application/json
+La API utiliza Laravel Sanctum para proteger los endpoints privados.
 
-El login admite 5 intentos por minuto por correo e IP.
+### Iniciar sesión
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Método:** POST
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Endpoint:**
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```text
+/api/v1/auth/login
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+**Ejemplo de solicitud:**
 
-## Contributing
+```json
+{
+    "email": "ana@example.com",
+    "password": "secreta123",
+    "device_name": "Insomnia"
+}
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Al iniciar sesión correctamente, la API devuelve un token de acceso.
 
-## Code of Conduct
+### Utilizar el token
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Para acceder a los endpoints protegidos, debes enviar el token en el encabezado HTTP:
 
-## Security Vulnerabilities
+```text
+Authorization: Bearer TU_TOKEN
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+También debes enviar:
 
-## License
+```text
+Accept: application/json
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Cerrar sesión
+
+**Método:** POST
+
+**Endpoint:**
+
+```text
+/api/v1/auth/logout
+```
+
+Esta operación revoca el token utilizado en la solicitud.
+
+## Gestión de contactos
+
+### Crear un contacto
+
+**Método:** POST
+
+**Endpoint:**
+
+```text
+/api/v1/contacts
+```
+
+**Ejemplo de solicitud:**
+
+```json
+{
+    "name": "Ana Torres",
+    "phone_number": "3001234567",
+    "address": "Calle 10 # 20-30",
+    "email": "ana@example.com"
+}
+```
+
+### Consultar contactos
+
+**Método:** GET
+
+```text
+/api/v1/contacts
+```
+
+Devuelve los contactos pertenecientes al usuario autenticado.
+
+### Consultar un contacto específico
+
+**Método:** GET
+
+```text
+/api/v1/contacts/1
+```
+
+### Actualizar un contacto
+
+**Método:** PATCH
+
+```text
+/api/v1/contacts/1
+```
+
+**Ejemplo de solicitud:**
+
+```json
+{
+    "name": "Ana María Torres",
+    "phone_number": "3019876543"
+}
+```
+
+### Eliminar un contacto
+
+**Método:** DELETE
+
+```text
+/api/v1/contacts/1
+```
+
+La operación devuelve el código HTTP `204 No Content` cuando se elimina correctamente.
+
+## Validaciones y seguridad
+
+- Las rutas privadas requieren autenticación.
+- Cada usuario solamente puede consultar y administrar sus propios contactos.
+- Un usuario no puede acceder a los contactos pertenecientes a otro usuario.
+- Se validan los datos enviados al crear y actualizar contactos.
+- Se controla la duplicidad de correo electrónico y teléfono dentro de la agenda del usuario.
+- Los tokens se gestionan mediante Laravel Sanctum.
+
+## Códigos de respuesta HTTP
+
+| Código | Descripción |
+|---|---|
+| 200 | Solicitud procesada correctamente |
+| 201 | Recurso creado correctamente |
+| 204 | Recurso eliminado correctamente |
+| 401 | Usuario no autenticado |
+| 403 | Acceso no autorizado |
+| 404 | Recurso no encontrado |
+| 405 | Método HTTP no permitido |
+| 422 | Error de validación |
+| 429 | Demasiadas solicitudes |
+
+## Pruebas
+
+Para ejecutar las pruebas automatizadas del proyecto:
+
+```bash
+php artisan test
+```
+
+Para ejecutar las pruebas de contactos:
+
+```bash
+php artisan test --filter=WorkshopContactsTest
+```
+
+## Documentación de la API
+
+Si Scramble está habilitado en el proyecto, puedes consultar la documentación interactiva en:
+
+```text
+http://127.0.0.1:8000/docs/api
+```
+
+## Autor
+
+Proyecto desarrollado como parte del proceso de formación en **Análisis y Desarrollo de Software (ADSO)**.
+
+**Repositorio:** [Contact API - GitHub](https://github.com/yendrismartinez55-hue/contact-api)
+
+---
+
+**Contact API** — API REST para la gestión de contactos con autenticación y protección de datos mediante Laravel Sanctum.
