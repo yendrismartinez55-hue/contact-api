@@ -29,6 +29,12 @@ class AuthController extends Controller
                 'email' => 'Las credenciales no son correctas.',
             ]);
         }
+        $device = null;
+        if ($request->validated('device')) {
+            $device = $request->validated('device');
+        } else {
+            $device = 'dispositivo';
+        }
 
         $token = $user->createToken(
             $request->validated('device_name')
